@@ -55,6 +55,7 @@
 
       function updateChat(newChat) {
         chat = newChat;
+        console.log(newChat);
         msgContainer.innerHTML = '';
         for (let msg of chat.messages) {
           msgContainer.innerHTML += `<div>${msg}</div>`;
