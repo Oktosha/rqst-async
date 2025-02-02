@@ -5,6 +5,8 @@
 use std::{
     io::{self, BufRead, BufReader, BufWriter, Write},
     net::{Shutdown, TcpStream},
+    thread::sleep,
+    time::Duration,
 };
 
 use http::StatusCode;
@@ -114,6 +116,7 @@ pub fn handle(
     stream: &TcpStream,
     callback: impl Fn(&str, crate::Request) -> Option<crate::Response>,
 ) -> io::Result<()> {
+    sleep(Duration::from_secs(2));
     let mut reader = BufReader::new(stream.try_clone()?);
     let mut writer = BufWriter::new(stream.try_clone()?);
 
@@ -148,5 +151,6 @@ pub fn handle(
         let buf = stringify_response(resp);
         writer.write_all(&buf)?;
         writer.flush()?;
+        stream.shutdown(Shutdown::Both)?;
     }
 }
