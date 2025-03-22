@@ -10,12 +10,12 @@ use miniserve::{
     Content, Request, Response,
 };
 
-fn index(_req: Request) -> Response {
+async fn index(_req: Request) -> Response {
     let content = include_str!("../index.html").to_string();
     Ok(Content::Html(content))
 }
 
-fn chat(req: Request) -> Response {
+async fn chat(req: Request) -> Response {
     if let Request::Post(s) = req {
         let mut parse_result: Result<Chat, _> = serde_json::from_str(&s);
         match &mut parse_result {
@@ -34,10 +34,11 @@ fn chat(req: Request) -> Response {
         Err(http::StatusCode::BAD_REQUEST)
     }
 }
-
-fn main() {
+#[tokio::main]
+async fn main() {
     miniserve::Server::new()
         .route("/", index)
         .route("/chat", chat)
         .run()
+        .await;
 }
